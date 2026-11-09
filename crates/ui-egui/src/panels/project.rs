@@ -995,6 +995,19 @@ pub fn route(app: &mut FilmcraftApp, ctx: &egui::Context, op: &str, params: &Val
             let Some(p) = app.session.path.clone() else { return Some(Err("the project has not been saved".into())) };
             crate::panels::menu_dialogs::open_path(app, ctx, &p, true).map(|_| json!({"path": p}))
         }
+        // Jonas's patch: a keyboard shortcut for the selected clip's "Reveal in Finder" (the
+        // Project panel context menu button in `project_views.rs` calls the same `file.reveal`
+        // engine query, which falls back to the current project selection when `items` is
+        // omitted — see `project_tools::targets`).
+        "revealInFinder" => {
+            let r = app.session.execute("file.reveal", json!({})).map_err(|e| e.to_string());
+            r.and_then(|v| {
+                for p in v["paths"].as_array().cloned().unwrap_or_default() {
+                    crate::panels::menu_dialogs::open_path(app, ctx, p.as_str().unwrap_or_default(), true)?;
+                }
+                Ok(v)
+            })
+        }
         "newPanel" => {
             // a second Project panel: the project's root in a floating panel
             let root = app.session.project.root.id.0;

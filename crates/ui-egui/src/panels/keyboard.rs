@@ -114,6 +114,10 @@ pub const COMMANDS: &[UiCommand] = &[
     uic!("projectPanel.freeformOptions", "Freeform View Options…", [], None),
     uic!("projectPanel.saveArrangement", "Save Arrangement…", [], None),
     uic!("projectPanel.revealProject", "Reveal Project in Finder…", [], None),
+    // Jonas's patch: the selected clip's media file (Clip ▸ Reveal in Finder has no default
+    // shortcut and the engine's `file.reveal` query is not itself bindable, so it's re-exposed
+    // here under `projectPanel.*` where it's assignable and routed in `project.rs::route`).
+    uic!("projectPanel.revealInFinder", "Reveal in Finder", [], None),
     uic!("projectPanel.newPanel", "New Project Panel", ["Window"], None),
     uic!("textPanel.prevWord", "Navigate to Previous Word", [], None),
     uic!("textPanel.nextWord", "Navigate to Next Word", [], None),
